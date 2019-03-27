@@ -1,0 +1,2 @@
+add_executable(BigIntegerTests BigInteger_tests.cpp main.cpp)
+target_link_libraries(BigIntegerTests BigInteger)
