@@ -110,7 +110,7 @@ public:
 public:
 	class DivisionByZeroException : public std::exception
 	{
-		virtual const char *what() const override;
+		virtual const char *what() const noexcept override;
 	};
 
 	// divide operation that returns the result as well as the remainder

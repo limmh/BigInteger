@@ -387,7 +387,7 @@ BigInteger BigInteger::operator--(int)
 	return previous;
 }
 
-const char *BigInteger::DivisionByZeroException::what() const
+const char *BigInteger::DivisionByZeroException::what() const noexcept
 {
 	return "Big integer division by zero exception.";
 }
