@@ -387,27 +387,27 @@ TEST_CASE("Unary minus (test 5)")
 	REQUIRE("-999999999999999999999999999999999999999" == BigInteger::toString(n));
 }
 
-TEST_CASE("Divison by zero (1)")
+TEST_CASE("Division by zero (1)")
 {
 	BigInteger n = 1;
 	try
 	{
 		n /= 0;
 	}
-	catch (BigInteger::DivisionByZeroException& e)
+	catch (BigInteger::DivisionByZeroException&)
 	{
 		REQUIRE(n == 1);
 	}
 }
 
-TEST_CASE("Divison by zero (2)")
+TEST_CASE("Division by zero (2)")
 {
 	BigInteger n = 1;
 	try
 	{
 		BigInteger result = n / 0;
 	}
-	catch (BigInteger::DivisionByZeroException& e)
+	catch (BigInteger::DivisionByZeroException&)
 	{
 		REQUIRE(n == 1);
 	}
