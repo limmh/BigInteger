@@ -25,7 +25,6 @@ SOFTWARE.
 #include "BigInteger.hpp"
 #include <iostream>
 #include <string>
-#include <vector>
 
 using namespace std;
 
@@ -49,15 +48,25 @@ int main(int argc, char *argv[])
 	const string op = argv[2];
 
 	if (op == "+")
+	{
 		result = n1 + n2;
+	}
 	else if (op == "-")
+	{
 		result = n1 - n2;
+	}
 	else if (op == "x")
+	{
 		result = n1 * n2;
+	}
 	else if (op == "/")
+	{
 		result = n1 / n2;
+	}
 	else if (op == "rem")
+	{
 		result = n1 % n2;
+	}
 	else
 	{
 		cout << "Invalid operator: " << op << '\n';

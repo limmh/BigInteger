@@ -27,7 +27,6 @@ SOFTWARE.
 #include <cassert>
 #include <cctype>
 #include <climits>
-#include <cstring>
 #include <algorithm>
 
 using namespace BigIntegerHelper;
@@ -395,7 +394,9 @@ const char *BigInteger::DivisionByZeroException::what() const noexcept
 BigInteger BigInteger::divide(BigInteger dividend, BigInteger divisor, BigInteger& remainder)
 {
 	if (divisor == 0)
+	{
 		throw DivisionByZeroException();
+	}
 
 	const bool dividend_is_negative = dividend < 0;
 	const bool divisor_is_negative = divisor < 0;
