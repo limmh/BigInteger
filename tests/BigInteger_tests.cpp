@@ -153,17 +153,20 @@ TEST_CASE("Assign 987654321 to integer")
 	REQUIRE("987654321" == BigInteger::toString(number));
 }
 
-TEST_CASE("ABC")
+TEST_CASE("Post-increment")
 {
-	BigInteger number = INT64_MAX;
-	number++;
-	REQUIRE("9223372036854775808" == BigInteger::toString(number));
+	BigInteger number = "18446744073709551615";
+	BigInteger number2 = number++;
+	REQUIRE("18446744073709551616" == BigInteger::toString(number));
+	REQUIRE("18446744073709551615" == BigInteger::toString(number2));
 }
 
-TEST_CASE("DEF")
+TEST_CASE("Pre-increment")
 {
-	BigInteger number = "92233720368547758080";
-	REQUIRE("92233720368547758080" == BigInteger::toString(number));
+	BigInteger number = "18446744073709551615";
+	BigInteger number2 = ++number;
+	REQUIRE("18446744073709551616" == BigInteger::toString(number));
+	REQUIRE("18446744073709551616" == BigInteger::toString(number2));
 }
 
 TEST_CASE("Assign -99999999999999999999 to integer")
@@ -220,17 +223,161 @@ TEST_CASE("Perform 9223372036854775808 + 1 on integer")
 	REQUIRE("9223372036854775808" == BigInteger::toString(number));
 }
 
+TEST_CASE("Positive number + positive number")
+{
+	BigInteger n1 = "999999999999999999999999999999";
+	BigInteger n2 = 1;
+	BigInteger result = n1 + n2;
+	REQUIRE("1000000000000000000000000000000" == BigInteger::toString(result));
+}
+
+TEST_CASE("Negative number + negative number")
+{
+	BigInteger n1 = "-999999999999999999999999999999";
+	BigInteger n2 = -1;
+	BigInteger result = n1 + n2;
+	REQUIRE("-1000000000000000000000000000000" == BigInteger::toString(result));
+}
+
+TEST_CASE("Negative number + positive number")
+{
+	BigInteger n1 = "-999999999999999999999999999999";
+	BigInteger n2 = 1;
+	BigInteger result = n1 + n2;
+	REQUIRE("-999999999999999999999999999998" == BigInteger::toString(result));
+}
+
+TEST_CASE("Positive number + negative number")
+{
+	BigInteger n1 = "999999999999999999999999999999";
+	BigInteger n2 = -1;
+	BigInteger result = n1 + n2;
+	REQUIRE("999999999999999999999999999998" == BigInteger::toString(result));
+}
+
+TEST_CASE("Positive number - positive number")
+{
+	BigInteger n1 = "999999999999999999999999999999";
+	BigInteger n2 = 1;
+	BigInteger result = n1 - n2;
+	REQUIRE("999999999999999999999999999998" == BigInteger::toString(result));
+}
+
+TEST_CASE("Negative number - negative number")
+{
+	BigInteger n1 = "-999999999999999999999999999999";
+	BigInteger n2 = -1;
+	BigInteger result = n1 - n2;
+	REQUIRE("-999999999999999999999999999998" == BigInteger::toString(result));
+}
+
+TEST_CASE("Negative number - positive number")
+{
+	BigInteger n1 = "-999999999999999999999999999999";
+	BigInteger n2 = 1;
+	BigInteger result = n1 - n2;
+	REQUIRE("-1000000000000000000000000000000" == BigInteger::toString(result));
+}
+
+TEST_CASE("Positive number - negative number")
+{
+	BigInteger n1 = "999999999999999999999999999999";
+	BigInteger n2 = -1;
+	BigInteger result = n1 - n2;
+	REQUIRE("1000000000000000000000000000000" == BigInteger::toString(result));
+}
+
 TEST_CASE("Perform big integer multiplication")
 {
-	BigInteger number = BigInteger(100) * BigInteger(100);
-	REQUIRE(number == 10000);
-	REQUIRE("10000" == BigInteger::toString(number));
+	BigInteger n1 = 100;
+	BigInteger n2 = 100;
+	BigInteger result = n1 * n2;
+	REQUIRE(result == 10000);
+	REQUIRE("10000" == BigInteger::toString(result));
 }
 
 TEST_CASE("Perform big integer multiplication 2")
 {
-	BigInteger number = BigInteger(100) * BigInteger("99999999999999999999999");
-	REQUIRE("9999999999999999999999900" == BigInteger::toString(number));
+	BigInteger n1 = 100;
+	BigInteger n2 = "99999999999999999999999";
+	BigInteger result = n1 * n2;
+	REQUIRE("9999999999999999999999900" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 3")
+{
+	BigInteger n1 = "99999999999999999999999";
+	BigInteger n2 = 100;
+	BigInteger result = n1 * n2;
+	REQUIRE("9999999999999999999999900" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 4")
+{
+	BigInteger n1 = "99999999999999999999";
+	BigInteger n2 = -100;
+	BigInteger result = n1 * n2;
+	REQUIRE("-9999999999999999999900" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 5")
+{
+	BigInteger n1 = "-99999999999999999999";
+	BigInteger n2 = 100;
+	BigInteger result = n1 * n2;
+	REQUIRE("-9999999999999999999900" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 6")
+{
+	BigInteger n1 = -100;
+	BigInteger n2 = "99999999999999999999";
+	BigInteger result = n1 * n2;
+	REQUIRE("-9999999999999999999900" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 7")
+{
+	BigInteger n1 = 100;
+	BigInteger n2 = "-99999999999999999999";
+	BigInteger result = n1 * n2;
+	REQUIRE("-9999999999999999999900" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 8")
+{
+	BigInteger n1 = -1;
+	BigInteger n2 = -1;
+	BigInteger result = n1 * n2;
+	REQUIRE(result == 1);
+	REQUIRE("1" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 9")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = 0;
+	BigInteger result = n1 * n2;
+	REQUIRE(result == 0);
+	REQUIRE("0" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 10")
+{
+	BigInteger n1 = 1;
+	BigInteger n2 = 0;
+	BigInteger result = n1 * n2;
+	REQUIRE(result == 0);
+	REQUIRE("0" == BigInteger::toString(result));
+}
+
+TEST_CASE("Perform big integer multiplication 11")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = 1;
+	BigInteger result = n1 * n2;
+	REQUIRE(result == 0);
+	REQUIRE("0" == BigInteger::toString(result));
 }
 
 TEST_CASE("Perform big integer division")

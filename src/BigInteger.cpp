@@ -297,6 +297,20 @@ BigInteger& BigInteger::operator*=(const BigInteger& n)
 	sign_extend(multiplier.value, multiplicand_nblocks);
 	*this = 0;
 
+	const bool multiplicand_is_negative = sign_bit_is_set(multiplicand.value[multiplicand.value.size() - 1]);
+	const bool multiplier_is_negative = sign_bit_is_set(multiplier.value[multiplier.value.size() - 1]);
+	const bool result_is_negative = (multiplicand_is_negative && !multiplier_is_negative) || (!multiplicand_is_negative && multiplier_is_negative);
+
+	if (multiplicand_is_negative)
+	{
+		multiplicand = -multiplicand;
+	}
+
+	if (multiplier_is_negative)
+	{
+		multiplier = -multiplier;
+	}
+
 	while (multiplier != zero)
 	{
 		if ((multiplier & 1) != zero)
@@ -305,6 +319,11 @@ BigInteger& BigInteger::operator*=(const BigInteger& n)
 		}
 		multiplicand <<= 1;
 		multiplier >>= 1;
+	}
+
+	if (result_is_negative)
+	{
+		*this = -(*this);
 	}
 
 	return *this;
