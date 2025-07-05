@@ -1,7 +1,7 @@
-#define CATCH_CONFIG_RUNNER
-#include "catch.hpp"
 #include "measurement.h"
 #include <iostream>
+
+extern void run_all_tests();
 
 struct data_t
 {
@@ -12,8 +12,8 @@ struct data_t
 
 void run_tests(void *config_data)
 {
-	data_t *data = static_cast<data_t*>(config_data);
-	data->return_value = Catch::Session().run(data->arg_count, data->argv);
+	config_data; // unused
+	run_all_tests();
 }
 
 int main(int argc, char *argv[])
