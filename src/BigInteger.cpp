@@ -97,11 +97,7 @@ BigInteger& BigInteger::operator=(const char *n)
 BigInteger BigInteger::operator~() const
 {
 	BigInteger result = *this;
-	for (auto it = result.value.begin(); it != result.value.end(); ++it)
-	{
-		uint64_t& block = *it;
-		block = ~block;
-	}
+	invert_bits(result.value);
 	return result;
 }
 
@@ -117,23 +113,48 @@ BigInteger BigInteger::operator-() const
 	return result;
 }
 
+bool BigInteger::operator!() const
+{
+	return (*this == 0);
+}
+
 bool BigInteger::operator==(const BigInteger& n) const
 {
-	bool result = true;
-	BigInteger n1 = *this;
-	BigInteger n2 = n;
-	make_size_the_same_and_sign_extend(n1.value, n2.value);
-	const size_t size = n1.value.size();
+	assert(value.size() > 0U);
+	assert(n.value.size() > 0U);
 
-	for (size_t i = 0; i < size; ++i)
+	const bool is_negative = sign_bit_is_set(value[value.size() - 1U]);
+	const bool n_is_negative = sign_bit_is_set(n.value[n.value.size() - 1U]);
+	if ((is_negative && !n_is_negative) || (!is_negative && n_is_negative))
 	{
-		if (n1.value[i] != n2.value[i])
+		return false;
+	}
+
+	const uint64_t sign_block = (is_negative) ? UINT64_MAX : 0U;
+	const size_t minimum_number_of_blocks = (value.size() < n.value.size()) ?
+			value.size() : n.value.size();
+	const size_t maximum_number_of_blocks = (value.size() > n.value.size()) ?
+			value.size() : n.value.size();
+	const uint64_t *p_larger_block = (value.size() > n.value.size()) ?
+			&value[0] : &(n.value[0]);
+
+	for (size_t i = 0U; i < minimum_number_of_blocks; ++i)
+	{
+		if (value[i] != n.value[i])
 		{
-			result = false;
-			break;
+			return false;
 		}
 	}
-	return result;
+
+	for (size_t i = minimum_number_of_blocks; i < maximum_number_of_blocks; ++i)
+	{
+		if (p_larger_block[i] != sign_block)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool BigInteger::operator!=(const BigInteger& n) const
@@ -143,24 +164,118 @@ bool BigInteger::operator!=(const BigInteger& n) const
 
 bool BigInteger::operator>(const BigInteger& n) const
 {
-	return (*this >= n) && ((*this - n) != 0);
+	assert(value.size() > 0U);
+	assert(n.value.size() > 0U);
+
+	if (*this == n)
+	{
+		return false;
+	}
+
+	const bool is_negative = sign_bit_is_set(value[value.size() - 1U]);
+	const bool n_is_negative = sign_bit_is_set(n.value[n.value.size() - 1U]);
+
+	if (!is_negative && n_is_negative)
+	{
+		return true;
+	}
+	else if (is_negative && !n_is_negative)
+	{
+		return false;
+	}
+	else
+	{
+		const BigInteger difference = *this - n;
+		const bool difference_is_negative = sign_bit_is_set(difference.value[difference.value.size() - 1U]);
+		return !difference_is_negative;
+	}
 }
 
 bool BigInteger::operator>=(const BigInteger& n) const
 {
-	BigInteger diff = *this - n;
-	return !sign_bit_is_set(diff.value[diff.value.size() - 1]);
+	assert(value.size() > 0U);
+	assert(n.value.size() > 0U);
+
+	if (*this == n)
+	{
+		return true;
+	}
+
+	const bool is_negative = sign_bit_is_set(value[value.size() - 1U]);
+	const bool n_is_negative = sign_bit_is_set(n.value[n.value.size() - 1U]);
+
+	if (!is_negative && n_is_negative)
+	{
+		return true;
+	}
+	else if (is_negative && !n_is_negative)
+	{
+		return false;
+	}
+	else
+	{
+		const BigInteger difference = *this - n;
+		const bool difference_is_negative = sign_bit_is_set(difference.value[difference.value.size() - 1U]);
+		return !difference_is_negative;
+	}
 }
 
 bool BigInteger::operator<(const BigInteger& n) const
 {
-	BigInteger diff = *this - n;
-	return sign_bit_is_set(diff.value[diff.value.size() - 1]);
+	assert(value.size() > 0U);
+	assert(n.value.size() > 0U);
+
+	if (*this == n)
+	{
+		return false;
+	}
+
+	const bool is_negative = sign_bit_is_set(value[value.size() - 1U]);
+	const bool n_is_negative = sign_bit_is_set(n.value[n.value.size() - 1U]);
+
+	if (!is_negative && n_is_negative)
+	{
+		return false;
+	}
+	else if (is_negative && !n_is_negative)
+	{
+		return true;
+	}
+	else
+	{
+		const BigInteger difference = *this - n;
+		const bool difference_is_negative = sign_bit_is_set(difference.value[difference.value.size() - 1U]);
+		return difference_is_negative;
+	}
 }
 
 bool BigInteger::operator<=(const BigInteger& n) const
 {
-	return (*this < n) || ((*this - n) == 0);
+	assert(value.size() > 0U);
+	assert(n.value.size() > 0U);
+
+	if (*this == n)
+	{
+		return true;
+	}
+
+	const bool is_negative = sign_bit_is_set(value[value.size() - 1U]);
+	const bool n_is_negative = sign_bit_is_set(n.value[n.value.size() - 1U]);
+
+	if (!is_negative && n_is_negative)
+	{
+		return false;
+	}
+	else if (is_negative && !n_is_negative)
+	{
+		return true;
+	}
+	else
+	{
+		const BigInteger difference = *this - n;
+		const bool difference_is_negative = sign_bit_is_set(difference.value[difference.value.size() - 1U]);
+		return difference_is_negative;
+	}
 }
 
 BigInteger& BigInteger::operator&=(const BigInteger& n)
@@ -232,16 +347,16 @@ BigInteger& BigInteger::operator+=(const BigInteger& n)
 {
 	BigInteger operand(n);
 	make_size_the_same_and_sign_extend(value, operand.value);
-	sign_extend(value, 1);
-	sign_extend(operand.value, 1);
+	sign_extend(value, 1U);
+	sign_extend(operand.value, 1U);
 
 	uint64_t carry = 0U;
 
 	for (size_t i = 0; i < value.size(); ++i)
 	{
-		const uint64_t min_operand = (value[i] < operand.value[i]) ? value[i] : operand.value[i];
+		const uint64_t minimum_operand = (value[i] < operand.value[i]) ? value[i] : operand.value[i];
 		value[i] += operand.value[i];
-		if (value[i] < min_operand)
+		if (value[i] < minimum_operand)
 		{
 			value[i] += carry;
 			carry = 1U;
@@ -266,6 +381,7 @@ BigInteger& BigInteger::operator-=(const BigInteger& n)
 BigInteger& BigInteger::operator*=(const BigInteger& n)
 {
 	const BigInteger zero = 0;
+	const BigInteger one = 1;
 	BigInteger multiplicand(*this);
 	BigInteger multiplier(n);
 	size_t multiplicand_nblocks = multiplicand.value.size();
@@ -289,12 +405,12 @@ BigInteger& BigInteger::operator*=(const BigInteger& n)
 
 	while (multiplier != zero)
 	{
-		if ((multiplier & 1) != zero)
+		if ((multiplier & one) != zero)
 		{
 			*this += multiplicand;
 		}
-		multiplicand <<= 1;
-		multiplier >>= 1;
+		multiplicand <<= 1U;
+		multiplier >>= 1U;
 	}
 
 	if (result_is_negative)
@@ -307,15 +423,14 @@ BigInteger& BigInteger::operator*=(const BigInteger& n)
 
 BigInteger& BigInteger::operator/=(const BigInteger& n)
 {
-	BigInteger remainder;
-	*this = divide(*this, n, remainder);
+	*this = divide(*this, n, nullptr);
 	return *this;
 }
 
 BigInteger& BigInteger::operator%=(const BigInteger& n)
 {
 	BigInteger remainder;
-	divide(*this, n, remainder);
+	(void) divide(*this, n, &remainder);
 	*this = remainder;
 	return *this;
 }
@@ -381,20 +496,33 @@ BigInteger BigInteger::operator--(int)
 	return previous;
 }
 
+bool BigInteger::operator&&(const BigInteger& n) const
+{
+	const BigInteger zero = 0;
+	return (*this != zero) && (n != zero);
+}
+
+bool BigInteger::operator||(const BigInteger& n) const
+{
+	const BigInteger zero = 0;
+	return (*this != zero) || (n != zero);
+}
+
 const char *BigInteger::DivisionByZeroException::what() const noexcept
 {
 	return "Big integer division by zero exception.";
 }
 
-BigInteger BigInteger::divide(BigInteger dividend, BigInteger divisor, BigInteger& remainder)
+BigInteger BigInteger::divide(BigInteger dividend, BigInteger divisor, BigInteger *p_remainder)
 {
-	if (divisor == 0)
+	const BigInteger zero = 0;
+	if (divisor == zero)
 	{
 		throw DivisionByZeroException();
 	}
 
-	const bool dividend_is_negative = dividend < 0;
-	const bool divisor_is_negative = divisor < 0;
+	const bool dividend_is_negative = dividend < zero;
+	const bool divisor_is_negative = divisor < zero;
 	const bool quotient_is_negative = (dividend_is_negative && !divisor_is_negative) || (!dividend_is_negative && divisor_is_negative);
 
 	if (dividend_is_negative)
@@ -412,20 +540,20 @@ BigInteger BigInteger::divide(BigInteger dividend, BigInteger divisor, BigIntege
 	assert(SIZE_MAX / num_bits_per_block >= num_blocks);
 	const size_t num_bits = num_blocks * num_bits_per_block;
 
-	remainder = 0;
+	BigInteger remainder = 0;
 	BigInteger quotient = 0;
-	BigInteger one = 1;
-	BigInteger mask;
+	const BigInteger one = 1;
+	BigInteger mask = 0;
 
-	for (size_t i = num_bits; i > 0; --i)
+	for (size_t i = num_bits; i > 0U; --i)
 	{
-		const size_t index = i - 1;
-		mask = (dividend >> index) & one;
-		remainder <<= 1;
+		const size_t num_bits_to_shift = i - 1U;
+		mask = (dividend >> num_bits_to_shift) & one;
+		remainder <<= 1U;
 		remainder |= mask;
 		if (remainder >= divisor)
 		{
-			quotient |= one << index;
+			quotient |= (one << num_bits_to_shift);
 			remainder -= divisor;
 		}
 	}
@@ -438,6 +566,11 @@ BigInteger BigInteger::divide(BigInteger dividend, BigInteger divisor, BigIntege
 	if (dividend_is_negative)
 	{
 		remainder = -remainder;
+	}
+
+	if (p_remainder != nullptr)
+	{
+		*p_remainder = remainder;
 	}
 
 	return quotient;
@@ -484,13 +617,12 @@ BigInteger BigInteger::fromString(const char *str, int base)
 
 	BigInteger number = 0;
 
-	int digit_value = digit_to_integer(*p, base);
-	while ((digit_value >= 0) && (digit_value < base))
+	while (*p >= '0' && *p <= '9')
 	{
+		const int digit_value = digit_to_integer(*p, base);
 		number *= base;
 		number += digit_value;
 		++p;
-		digit_value = digit_to_integer(*p, base);
 	}
 
 	if (is_negative)
@@ -549,7 +681,7 @@ std::string BigInteger::toString(BigInteger n, int base, bool upper_case)
 	bool number_is_not_zero = (n != zero);
 	while (number_is_not_zero)
 	{
-		n = divide(n, group, remainder);
+		n = divide(n, group, &remainder);
 		number_is_not_zero = (n != zero);
 		uint64_t rem = ToIntegerType<uint64_t>(remainder);
 

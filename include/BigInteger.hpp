@@ -38,6 +38,7 @@ public:
 	BigInteger operator~() const;
 	BigInteger operator+() const;
 	BigInteger operator-() const;
+	bool operator!() const;
 
 	// Comparison operators
 	bool operator==(const BigInteger& n) const;
@@ -75,6 +76,10 @@ public:
 	BigInteger operator/(const BigInteger& n) const;
 	BigInteger operator%(const BigInteger& n) const;
 
+	// Logical operators
+	bool operator&&(const BigInteger& n) const;
+	bool operator||(const BigInteger& n) const;
+
 	// Pre-increment and pre-decrement operators
 	BigInteger& operator++();
 	BigInteger& operator--();
@@ -91,7 +96,7 @@ public:
 
 	// divide operation that returns the result as well as the remainder
 	// throws DivisionByZeroException if the divisor is zero
-	static BigInteger divide(BigInteger dividend, BigInteger divisor, BigInteger& remainder);
+	static BigInteger divide(BigInteger dividend, BigInteger divisor, BigInteger *p_remainder);
 
 	// Converts a string to a big integer
 	static BigInteger fromString(const char *str, int base = 10);

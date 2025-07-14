@@ -130,20 +130,28 @@ TEST_CASE(test_16, "Initialize to 987654321")
 	REQUIRE("987654321" == BigInteger::toString(number));
 }
 
-TEST_CASE(test_17, "Post-increment")
+TEST_CASE(test_17, "Post-increment and post-decrement")
 {
 	BigInteger number = "18446744073709551615";
 	BigInteger number2 = number++;
 	REQUIRE("18446744073709551616" == BigInteger::toString(number));
 	REQUIRE("18446744073709551615" == BigInteger::toString(number2));
+
+	number2 = number--;
+	REQUIRE("18446744073709551615" == BigInteger::toString(number));
+	REQUIRE("18446744073709551616" == BigInteger::toString(number2));
 }
 
-TEST_CASE(test_18, "Pre-increment")
+TEST_CASE(test_18, "Pre-increment and pre-decrement")
 {
 	BigInteger number = "18446744073709551615";
 	BigInteger number2 = ++number;
 	REQUIRE("18446744073709551616" == BigInteger::toString(number));
 	REQUIRE("18446744073709551616" == BigInteger::toString(number2));
+
+	number2 = --number;
+	REQUIRE("18446744073709551615" == BigInteger::toString(number));
+	REQUIRE("18446744073709551615" == BigInteger::toString(number2));
 }
 
 TEST_CASE(test_19, "Initialize to -99999999999999999999")
@@ -359,9 +367,15 @@ TEST_CASE(test_45, "Multiplication (11)")
 
 TEST_CASE(test_46, "Division (1)")
 {
-	BigInteger number = BigInteger(100) / BigInteger(100);
+	BigInteger n = 100;
+	BigInteger number = n / n;
 	REQUIRE(number == 1);
 	REQUIRE("1" == BigInteger::toString(number));
+
+	BigInteger remainder;
+	number = BigInteger::divide(n, n, &remainder);
+	REQUIRE(number == 1);
+	REQUIRE(remainder == 0);
 }
 
 TEST_CASE(test_47, "Division (2)")
@@ -630,137 +644,290 @@ TEST_CASE(test_80, "Greater than commparison (3)")
 	REQUIRE(n1 > n2);
 }
 
-TEST_CASE(test_81, "Greater than or equal to comparison (1)")
+TEST_CASE(test_81, "Greater than comparison (4)")
+{
+	BigInteger n1 = -1;
+	BigInteger n2 = -1;
+	REQUIRE(!(n1 > n2));
+}
+
+TEST_CASE(test_82, "Greater than comparison (5)")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = 0;
+	REQUIRE(!(n1 > n2));
+}
+
+TEST_CASE(test_83, "Greater than comparison (6)")
+{
+	BigInteger n1 = 1;
+	BigInteger n2 = 1;
+	REQUIRE(!(n1 > n2));
+}
+
+TEST_CASE(test_84, "Greater than comparison (7)")
+{
+	BigInteger n1 = -2;
+	BigInteger n2 = -1;
+	REQUIRE(!(n1 > n2));
+}
+
+TEST_CASE(test_85, "Greater than comparison (8)")
+{
+	BigInteger n1 = -1;
+	BigInteger n2 = 0;
+	REQUIRE(!(n1 > n2));
+}
+
+TEST_CASE(test_86, "Greater than comparsion (9)")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = 1;
+	REQUIRE(!(n1 > n2));
+}
+
+TEST_CASE(test_87, "Greater than comparison (10)")
+{
+	BigInteger n1 = 1;
+	BigInteger n2 = 2;
+	REQUIRE(!(n1 > n2));
+}
+
+TEST_CASE(test_88, "Greater than or equal to comparison (1)")
 {
 	BigInteger n1 = 0;
 	BigInteger n2 = -1;
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_82, "Greater than or equal to comparison (2)")
+TEST_CASE(test_89, "Greater than or equal to comparison (2)")
 {
 	BigInteger n1 = 1;
 	BigInteger n2 = 0;
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_83, "Greater than or equal to commparison (3)")
+TEST_CASE(test_90, "Greater than or equal to commparison (3)")
 {
 	BigInteger n1 = "999999999999999999999999999999";
 	BigInteger n2 = "-999999999999999999999999999999";
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_84, "Greater than or equal to comparison (4)")
+TEST_CASE(test_91, "Greater than or equal to comparison (4)")
 {
 	BigInteger n1 = 0;
 	BigInteger n2 = 0;
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_85, "Greater than or equal to comparison (5)")
+TEST_CASE(test_92, "Greater than or equal to comparison (5)")
 {
 	BigInteger n1 = 1;
 	BigInteger n2 = 1;
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_86, "Greater than or equal to commparison (6)")
+TEST_CASE(test_93, "Greater than or equal to commparison (6)")
 {
 	BigInteger n1 = "999999999999999999999999999999";
 	BigInteger n2 = "999999999999999999999999999999";
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_87, "Greater than or equal to comparison (7)")
+TEST_CASE(test_94, "Greater than or equal to comparison (7)")
 {
 	BigInteger n1 = -1;
 	BigInteger n2 = -1;
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_88, "Greater than or equal to commparison (8)")
+TEST_CASE(test_95, "Greater than or equal to commparison (8)")
 {
 	BigInteger n1 = "-999999999999999999999999999999";
 	BigInteger n2 = "-999999999999999999999999999999";
 	REQUIRE(n1 >= n2);
 }
 
-TEST_CASE(test_89, "Smaller than comparison (1)")
+TEST_CASE(test_96, "Greater than or equal to comparison (9)")
+{
+	BigInteger n1 = -2;
+	BigInteger n2 = -1;
+	REQUIRE(!(n1 >= n2));
+}
+
+TEST_CASE(test_97, "Greater than or equal to comparison (10)")
+{
+	BigInteger n1 = -1;
+	BigInteger n2 = 0;
+	REQUIRE(!(n1 >= n2));
+}
+
+TEST_CASE(test_98, "Greater than or equal to comparsion (11)")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = 1;
+	REQUIRE(!(n1 >= n2));
+}
+
+TEST_CASE(test_99, "Greater than or equal to comparison (12)")
+{
+	BigInteger n1 = 1;
+	BigInteger n2 = 2;
+	REQUIRE(!(n1 >= n2));
+}
+TEST_CASE(test_100, "Smaller than comparison (1)")
 {
 	BigInteger n1 = -1;
 	BigInteger n2 = 0;
 	REQUIRE(n1 < n2);
 }
 
-TEST_CASE(test_90, "Smaller than comparison (2)")
+TEST_CASE(test_101, "Smaller than comparison (2)")
 {
 	BigInteger n1 = 0;
 	BigInteger n2 = 1;
 	REQUIRE(n1 < n2);
 }
 
-TEST_CASE(test_91, "Smaller than commparison (3)")
+TEST_CASE(test_102, "Smaller than commparison (3)")
 {
 	BigInteger n1 = "-999999999999999999999999999999";
 	BigInteger n2 = "999999999999999999999999999999";
 	REQUIRE(n1 < n2);
 }
 
-TEST_CASE(test_92, "Smaller than or equal to comparison (1)")
+TEST_CASE(test_103, "Smaller than comparison (4)")
+{
+	BigInteger n1 = -1;
+	BigInteger n2 = -1;
+	REQUIRE(!(n1 < n2));
+}
+
+TEST_CASE(test_104, "Smaller than comparison (5)")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = 0;
+	REQUIRE(!(n1 < n2));
+}
+
+TEST_CASE(test_105, "Smaller than comparison (6)")
+{
+	BigInteger n1 = 1;
+	BigInteger n2 = 1;
+	REQUIRE(!(n1 < n2));
+}
+
+TEST_CASE(test_106, "Smaller than comparison (7)")
+{
+	BigInteger n1 = -1;
+	BigInteger n2 = -2;
+	REQUIRE(!(n1 < n2));
+}
+
+TEST_CASE(test_107, "Smaller than comparison (8)")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = -1;
+	REQUIRE(!(n1 < n2));
+}
+
+TEST_CASE(test_108, "Smaller than comparsion (9)")
+{
+	BigInteger n1 = 1;
+	BigInteger n2 = 0;
+	REQUIRE(!(n1 < n2));
+}
+
+TEST_CASE(test_109, "Smaller than comparison (10)")
+{
+	BigInteger n1 = 2;
+	BigInteger n2 = 1;
+	REQUIRE(!(n1 < n2));
+}
+
+TEST_CASE(test_110, "Smaller than or equal to comparison (1)")
 {
 	BigInteger n1 = -1;
 	BigInteger n2 = 0;
 	REQUIRE(n1 <= n2);
 }
 
-TEST_CASE(test_93, "Smaller than or equal to comparison (2)")
+TEST_CASE(test_111, "Smaller than or equal to comparison (2)")
 {
 	BigInteger n1 = 0;
 	BigInteger n2 = 1;
 	REQUIRE(n1 <= n2);
 }
 
-TEST_CASE(test_94, "Smaller than or equal to commparison (3)")
+TEST_CASE(test_112, "Smaller than or equal to commparison (3)")
 {
 	BigInteger n1 = "-999999999999999999999999999999";
 	BigInteger n2 = "999999999999999999999999999999";
 	REQUIRE(n1 <= n2);
 }
 
-TEST_CASE(test_95, "Smaller than or equal to comparison (4)")
+TEST_CASE(test_113, "Smaller than or equal to comparison (4)")
 {
 	BigInteger n1 = 0;
 	BigInteger n2 = 0;
 	REQUIRE(n1 <= n2);
 }
 
-TEST_CASE(test_96, "Smaller than or equal to comparison (5)")
+TEST_CASE(test_114, "Smaller than or equal to comparison (5)")
 {
 	BigInteger n1 = 1;
 	BigInteger n2 = 1;
 	REQUIRE(n1 <= n2);
 }
 
-TEST_CASE(test_97, "Smaller than or equal to commparison (6)")
+TEST_CASE(test_115, "Smaller than or equal to commparison (6)")
 {
 	BigInteger n1 = "999999999999999999999999999999";
 	BigInteger n2 = "999999999999999999999999999999";
 	REQUIRE(n1 <= n2);
 }
 
-TEST_CASE(test_98, "Smaller than or equal to comparison (7)")
+TEST_CASE(test_116, "Smaller than or equal to comparison (7)")
 {
 	BigInteger n1 = -1;
 	BigInteger n2 = -1;
 	REQUIRE(n1 <= n2);
 }
 
-TEST_CASE(test_99, "Smaller than or equal to commparison (8)")
+TEST_CASE(test_117, "Smaller than or equal to commparison (8)")
 {
 	BigInteger n1 = "-999999999999999999999999999999";
 	BigInteger n2 = "-999999999999999999999999999999";
 	REQUIRE(n1 <= n2);
+}
+
+TEST_CASE(test_118, "Smaller than or equal to comparison (9)")
+{
+	BigInteger n1 = -1;
+	BigInteger n2 = -2;
+	REQUIRE(!(n1 <= n2));
+}
+
+TEST_CASE(test_119, "Smaller than or equal to comparison (10)")
+{
+	BigInteger n1 = 0;
+	BigInteger n2 = -1;
+	REQUIRE(!(n1 <= n2));
+}
+
+TEST_CASE(test_120, "Smaller than or equal to comparsion (11)")
+{
+	BigInteger n1 = 1;
+	BigInteger n2 = 0;
+	REQUIRE(!(n1 <= n2));
+}
+
+TEST_CASE(test_121, "Smaller than or equal to comparison (12)")
+{
+	BigInteger n1 = 2;
+	BigInteger n2 = 1;
+	REQUIRE(!(n1 <= n2));
 }
 
 void run_all_tests()
@@ -775,7 +942,10 @@ void run_all_tests()
 		test_61, test_62, test_63, test_64, test_65, test_66, test_67, test_68, test_69, test_70,
 		test_71, test_72, test_73, test_74, test_75, test_76, test_77, test_78, test_79, test_80,
 		test_81, test_82, test_83, test_84, test_85, test_86, test_87, test_88, test_89, test_90,
-		test_91, test_92, test_93, test_94, test_95, test_96, test_97, test_98, test_99
+		test_91, test_92, test_93, test_94, test_95, test_96, test_97, test_98, test_99, test_100,
+		test_101, test_102, test_103, test_104, test_105, test_106, test_107, test_108, test_109,test_110,
+		test_111, test_112, test_113, test_114, test_115, test_116, test_117, test_118, test_119,test_120,
+		test_121
 	};
 	PRINT_FILE_NAME();
 	RUN_TESTS(tests);

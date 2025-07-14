@@ -14,10 +14,10 @@ namespace BigIntegerHelper
 
 inline bool sign_bit_is_set(uint64_t block)
 {
-	return ((block & static_cast<uint64_t>(INT64_MIN)) != 0U);
+	return ((block & static_cast<uint64_t>(INT64_MIN)) != 0ULL);
 }
 
-void sign_extend(std::vector<uint64_t>& integer, size_t extra_nblocks);
+void sign_extend(std::vector<uint64_t>& integer, size_t extra_num_blocks);
 
 void make_size_the_same(std::vector<uint64_t>& integer1, std::vector<uint64_t>& integer2);
 
@@ -25,21 +25,16 @@ void make_size_the_same_and_sign_extend(std::vector<uint64_t>& integer1, std::ve
 
 void resize_to_minimum_blocks(std::vector<uint64_t>& integer);
 
-constexpr int minimum_integer_base()
-{
-	return 2;
-}
+constexpr int minimum_integer_base() {return 2;}
 
-constexpr int maximum_integer_base()
-{
-	return 36;
-}
+constexpr int maximum_integer_base() {return 36;}
 
 // digit: a value between '0' and '9' or 'between A' and 'Z' or between 'a' and 'z'
 // base: a value between 2 and 36
 // returns a value between 0 and 35, returns -1 on error
 int digit_to_integer(char digit, int base);
 
+// returns null terminator on error
 char digit_to_char(int digit_value, int base, bool upper_case);
 
 // integer <<= num_bits
@@ -52,6 +47,8 @@ void bitwise_or(std::vector<uint64_t>& dest, const std::vector<uint64_t>& src);
 void bitwise_and(std::vector<uint64_t>& dest, const std::vector<uint64_t>& src);
 // dest ^= src
 void bitwise_xor(std::vector<uint64_t>& dest, const std::vector<uint64_t>& src);
+// integer = ~integer
+void invert_bits(std::vector<uint64_t>& integer);
 
 } // namespace
 
