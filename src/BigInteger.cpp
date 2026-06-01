@@ -652,19 +652,19 @@ std::string BigInteger::toString(BigInteger n, int base, bool upper_case)
 		base = max_base;
 	}
 
-	const bool is_negative = (n < 0);
+	const BigInteger zero = 0;
+	const bool is_negative = (n < zero);
 	if (is_negative)
 	{
 		n = -n;
 	}
 
-	const BigInteger zero = 0;
-	std::string result;
+	std::string result_string;
 
 	if (zero == n)
 	{
-		result = '0';
-		return result;
+		result_string = '0';
+		return result_string;
 	}
 
 	uint64_t group_value = base;
@@ -690,30 +690,30 @@ std::string BigInteger::toString(BigInteger n, int base, bool upper_case)
 			int counter = count;
 			while (counter != 0)
 			{
-				int digit_value = static_cast<int>(rem % static_cast<uint64_t>(base));
+				const int digit_value = static_cast<int>(rem % static_cast<uint64_t>(base));
 				rem /= static_cast<uint64_t>(base);
-				char c = digit_to_char(digit_value, base, upper_case);
-				result += c;
+				const char c = digit_to_char(digit_value, base, upper_case);
+				result_string.push_back(c);
 				--counter;
 			}
 		}
 		else
 		{
-			while (rem != 0)
+			while (rem != 0U)
 			{
-				int digit_value = static_cast<int>(rem % static_cast<uint64_t>(base));
+				const int digit_value = static_cast<int>(rem % static_cast<uint64_t>(base));
 				rem /= static_cast<uint64_t>(base);
-				char c = digit_to_char(digit_value, base, upper_case);
-				result += c;
+				const char c = digit_to_char(digit_value, base, upper_case);
+				result_string.push_back(c);
 			}
 		}
 	}
 
 	if (is_negative)
 	{
-		result += '-';
+		result_string.push_back('-');
 	}
 
-	std::reverse(result.begin(), result.end());
-	return result;
+	std::reverse(result_string.begin(), result_string.end());
+	return result_string;
 }
